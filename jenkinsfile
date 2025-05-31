@@ -11,7 +11,6 @@ pipeline {
         git branch: 'main', url: 'https://github.com/elocobemartin/brightmind-tech.git'
     }
 }
- 
         stage('Build') {
             steps {
                  echo 'Building the application...'
