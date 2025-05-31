@@ -8,7 +8,7 @@ pipeline {
         stage('Checkout') {
     steps {
         echo 'Checking out source code...'
-        git branch: 'main', url: 'https://github.com/elocobemartin/brightmind-tech.git'
+        git branch: 'main', url:'https://github.com/elocobemartin/brightmind-tech.git'
     }
 }
         stage('Build') {
