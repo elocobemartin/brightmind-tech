@@ -2,16 +2,17 @@ pipeline {
     agent any
     tools {
         jdk 'JDK-21'
-        maven 'Maven 3.9.9'
+        maven 'Maven-3.9.9'
     }
     stages {
         stage('Checkout') {
-    steps {
-        echo 'Checking out source code...'
-        git branch: 'main', url:'https://github.com/elocobemartin/brightmind-tech.git'
-    }
-}
-        stage('Build') {
+            steps {
+                 echo 'Checking out source code...'
+                 git branch: 'main', url:'https://github.com/elocobemartin/brightmind-tech.git'
+             }
+         }
+        
+         stage('Build') {
             steps {
                  echo 'Building the application...'
                  bat 'mvn clean compile' 
@@ -24,6 +25,7 @@ pipeline {
                 bat 'mvn test' 
             }
         }
+        
         stage('Package') {
             steps {
                  echo 'Packaging the application...'
@@ -42,6 +44,7 @@ pipeline {
             }
         }
     }
+       
        post {
              always {
                 echo 'Cleaning up workspace...'
