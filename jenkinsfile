@@ -38,7 +38,7 @@ pipeline {
                 echo 'Deploying to Tomcat...'
                 deploy adapters: [tomcat9(credentialsId: 'tomcat-credentials', 
          path: '', 
-            url: 'http://localhost:8082/')], 
+            url: 'http://localhost:8080/')], 
             contextPath: '/brightmind-tech', 
          war: 'target/*.war'
             }
