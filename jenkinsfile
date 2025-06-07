@@ -1,61 +1,54 @@
 pipeline {
     agent any
-     tools {
-        jdk 'JDK-21'
-        maven 'Maven 3.9.9'
+    tools {
+    jdk 'JDK21'
+    maven 'Maven 3.9.9'
     }
     stages {
-        stage('Checkout') {
+        stage('Checkout QA Branch') {
             steps {
-                 echo 'Checking out source code...'
-                 git branch: 'main', url:'https://github.com/elocobemartin/brightmind-tech.git'
-             }
-         }
-        
-         stage('Build') {
-            steps {
-                 echo 'Building the application...'
-                 bat 'mvn clean compile' 
+                echo 'Checking out QA branch...'
+                git branch: 'QA', url: 'https://github.com/rollinopz/brightmind-tech.git'
             }
         }
- 
-        stage('Test') {
+        stage('Copy Artifact from Dev') {
             steps {
-                echo 'Running tests...'
-                bat 'mvn test' 
+                echo 'Copying artifact from Dev environment...'
+                copyArtifacts(projectName: 'brightmind-tech/Dev', selector: 
+                lastSuccessful())
             }
         }
-        
-        stage('Package') {
+        stage('Deploy to Tomcat (QA)') {
             steps {
-                 echo 'Packaging the application...'
-                 bat 'mvn package' 
-            }
-        }
- 
-        stage('Deploy to Tomcat') {
-            steps {
-                echo 'Deploying to Tomcat...'
-                deploy adapters: [tomcat9(credentialsId: 'tomcat-credentials', 
-         path: '', 
-            url: 'http://localhost:8082/')], 
-            contextPath: '/brightmind-tech', 
-         war: 'target/*.war'
+                echo 'Deploying to QA Tomcat...'
+                script {
+                    def warFile = "target/brightmind-tech.war"
+                    if (fileExists(warFile)) {
+                        deploy adapters: [
+                            tomcat9(
+                                credentialsId: 'TomcatCreds',
+                                url: 'http://localhost:8021'
+                            )
+                        ], 
+                        contextPath: '/brightmind-tech-qa',
+                        war: warFile
+                    } else {
+                        error "WAR file not found. QA deployment failed."
+                    }
+                }
             }
         }
     }
-       
-       post {
-             always {
-                echo 'Cleaning up workspace...'
-             cleanWs()
-            }
+    post {
+        always {
+            echo 'Cleaning up workspace...'
+            deleteDir()
+        }
         success {
-        echo 'Pipeline completed successfully!'
+            echo 'QA Pipeline completed successfully!'
         }
         failure {
-    echo 'Pipeline failed. Check the logs for details.'
+            echo 'QA Pipeline failed. Check build logs for details.'
         }
     }
-}               
-    
+}
