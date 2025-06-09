@@ -8,7 +8,7 @@ pipeline {
             stage('Checkout Prod Branch') {
                 steps {
                     echo 'Checking out Prod branch...'
-                    git branch: 'Prod', url: 'https://github.com/rollinopz/brightmind-tech.git'
+                    git branch: 'Prod', url: 'https://github.com/elocobemartin/brighmind-tech.git'
                 }
             }
             stage('Copy Artifact from QA') {
